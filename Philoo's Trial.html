@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>TikTok Trivia Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #1a1a1a;
+      background-image: radial-gradient(white 0.5px, transparent 0.5px);
+      background-size: 40px 40px;
+      text-align: center;
+      padding: 30px;
+      color: white;
+    }
+
+    .container {
+      background: #2c2c2c;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(255,255,255,0.1);
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      color: #fff;
+    }
+
+    #question {
+      font-size: 20px;
+      margin-bottom: 15px;
+      color: #ffffff;
+    }
+
+    .choice {
+      display: block;
+      margin: 10px auto;
+      padding: 10px;
+      background: #f0f0f0;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      color: #000;
+      width: 40%;
+      transition: background 0.3s ease;
+    }
+
+    .choice:hover {
+      background: #dcdcdc;
+    }
+
+    #score {
+      margin-top: 15px;
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .play-again {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+      display: none;
+    }
+
+    .play-again:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>TikTok Trivia Game</h2>
+    <div id="question">Loading question...</div>
+    <div id="choices"></div>
+    <div id="score">Score: 0</div>
+    <button class="play-again" onclick="restartGame()">Play Again</button>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        question: "What year was TikTok launched internationally?",
+        choices: ["2016", "2018", "2017", "2015"],
+        correct: 2
+      },
+      {
+        question: "Which company owns TikTok?",
+        choices: ["Facebook", "ByteDance", "Google", "Snapchat"],
+        correct: 1
+      },
+      {
+        question: "What was TikTok originally called?",
+        choices: ["Loop", "Vine 2.0", "Musical.ly", "Reels"],
+        correct: 2
+      },
+      {
+        question: "What is the maximum length of most TikTok videos?",
+        choices: ["15 seconds", "60 seconds", "3 minutes", "10 minutes"],
+        correct: 3
+      },
+      {
+        question: "Which hashtag is most popular for dance challenges?",
+        choices: ["#funny", "#forYou", "#DanceChallenge", "#duet"],
+        correct: 2
+      },
+      {
+        question: "What is the main feature of TikTok's 'Duet'?",
+        choices: ["Record music", "Live chat", "Reply with a side-by-side video", "Group call"],
+        correct: 2
+      },
+      {
+        question: "What is the name of TikTok's algorithm-driven main feed?",
+        choices: ["Trending", "My Page", "Explore", "For You Page"],
+        correct: 3
+      },
+      {
+        question: "Which TikTok star became famous for lip-syncing 'Lottery (Renegade)'?",
+        choices: ["Charli D'Amelio", "Addison Rae", "Bella Poarch", "Dixie D'Amelio"],
+        correct: 0
+      },
+      {
+        question: "Which type of content is TikTok mainly known for?",
+        choices: ["Podcasts", "Short videos", "Articles", "Photo posts"],
+        correct: 1
+      },
+      {
+        question: "What does the 'Stitch' feature allow you to do?",
+        choices: ["Edit captions", "Merge your video with another", "Change music", "Tag friends"],
+        correct: 1
+      }
+    ];
+
+    let current = 0;
+    let score = 0;
+
+    const questionEl = document.getElementById("question");
+    const choicesEl = document.getElementById("choices");
+    const scoreEl = document.getElementById("score");
+    const playAgainButton = document.querySelector(".play-again");
+
+    function loadQuestion() {
+      if (current >= questions.length) {
+        questionEl.textContent = "Game Over! Final score: " + score + " / " + questions.length;
+        choicesEl.innerHTML = "";
+        playAgainButton.style.display = "block"; // Show Play Again button
+        return;
+      }
+
+      const q = questions[current];
+      questionEl.textContent = q.question;
+      choicesEl.innerHTML = "";
+
+      q.choices.forEach((choice, index) => {
+        const btn = document.createElement("button");
+        btn.textContent = choice;
+        btn.className = "choice";
+        btn.onclick = () => checkAnswer(index);
+        choicesEl.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(selected) {
+      if (selected === questions[current].correct) {
+        score++;
+        scoreEl.textContent = "Score: " + score;
+      }
+      current++;
+      loadQuestion();
+    }
+
+    function restartGame() {
+      current = 0;
+      score = 0;
+      scoreEl.textContent = "Score: 0";
+      playAgainButton.style.display = "none";
+      loadQuestion();
+    }
+
+    loadQuestion();
+  </script>
+</body>
+</html>
