@@ -2,188 +2,243 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>TikTok Trivia Game</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TikTok Trivia Puzzle</title>
   <style>
     body {
+      background-color: #111;
+      color: #fff;
       font-family: Arial, sans-serif;
-      background-color: #1a1a1a;
-      background-image: radial-gradient(white 0.5px, transparent 0.5px);
-      background-size: 40px 40px;
       text-align: center;
-      padding: 30px;
-      color: white;
-    }
-
-    .container {
-      background: #2c2c2c;
-      padding: 20px;
-      max-width: 600px;
-      margin: auto;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(255,255,255,0.1);
+      padding: 40px;
     }
 
     h1 {
+      font-size: 28px;
       margin-bottom: 20px;
-      color: #fff;
     }
 
-    #question {
-      font-size: 20px;
-      margin-bottom: 15px;
-      color: #ffffff;
+    #puzzle {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-template-rows: repeat(3, 100px);
+      gap: 2px;
+      justify-content: center;
+      margin: 0 auto 20px auto;
+      position: relative;
+      width: 300px;  /* Set a fixed width for the puzzle */
+      height: 300px; /* Set a fixed height for the puzzle */
     }
 
-    .choice {
-      display: block;
-      margin: 10px auto;
-      padding: 10px;
-      background: #f0f0f0;
+    .tile {
+      width: 100px;
+      height: 100px;
+      background-color: #333;
+      background-repeat: no-repeat;
+      background-size: 0%; /* Start with no background */
+      transition: background-size 0.4s ease;
+    }
+
+    #question-container {
+      margin-top: 20px;
+    }
+
+    .btn {
+      margin: 10px;
+      padding: 10px 20px;
+      background-color: #25f4ee;
       border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 16px;
       color: #000;
-      width: 40%;
-      transition: background 0.3s ease;
+      cursor: pointer;
+      font-weight: bold;
+      border-radius: 5px;
     }
 
-    .choice:hover {
-      background: #dcdcdc;
+    .btn:hover {
+      background-color: #1ab9c6;
     }
 
     #score {
+      font-size: 18px;
       margin-top: 15px;
-      font-weight: bold;
-      color: #fff;
     }
 
-    .play-again {
+    #play-again {
       margin-top: 20px;
-      padding: 10px 20px;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      cursor: pointer;
-      border-radius: 5px;
       display: none;
     }
 
-    .play-again:hover {
-      background-color: #45a049;
+    .correct-answer {
+      background-color: #4caf50; /* Green for correct answer */
+    }
+
+    .wrong-answer {
+      background-color: #f44336; /* Red for wrong answer */
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>TikTok Trivia Game</h2>
-    <div id="question">Loading question...</div>
-    <div id="choices"></div>
-    <div id="score">Score: 0</div>
-    <button class="play-again" onclick="restartGame()">Play Again</button>
+
+  <h1>TikTok Trivia Puzzle</h1>
+  <div id="puzzle"></div>
+
+  <div id="question-container">
+    <p id="question">Loading question...</p>
+    <div id="answers"></div>
+    <div id="score">Score: 0 / 9</div>
+    <button id="play-again" class="btn" onclick="restartGame()">Play Again</button>
   </div>
 
   <script>
     const questions = [
       {
-        question: "What year was TikTok launched internationally?",
-        choices: ["2016", "2018", "2017", "2015"],
-        correct: 2
+        question: "What year was TikTok launched globally?",
+        answers: ["2015", "2016", "2017", "2018"],
+        correct: "2018"
       },
       {
         question: "Which company owns TikTok?",
-        choices: ["Facebook", "ByteDance", "Google", "Snapchat"],
-        correct: 1
+        answers: ["Tencent", "ByteDance", "Alibaba", "Microsoft"],
+        correct: "ByteDance"
       },
       {
-        question: "What was TikTok originally called?",
-        choices: ["Loop", "Vine 2.0", "Musical.ly", "Reels"],
-        correct: 2
+        question: "What app was merged into TikTok?",
+        answers: ["Dubsmash", "Vine", "Musical.ly", "Clash"],
+        correct: "Musical.ly"
       },
       {
-        question: "What is the maximum length of most TikTok videos?",
-        choices: ["15 seconds", "60 seconds", "3 minutes", "10 minutes"],
-        correct: 3
+        question: "What is the TikTok logo shaped like?",
+        answers: ["A star", "A heart", "A music note", "A video camera"],
+        correct: "A music note"
       },
       {
-        question: "Which hashtag is most popular for dance challenges?",
-        choices: ["#funny", "#forYou", "#DanceChallenge", "#duet"],
-        correct: 2
+        question: "TikTok videos were initially limited to how many seconds?",
+        answers: ["15", "30", "60", "90"],
+        correct: "15"
       },
       {
-        question: "What is the main feature of TikTok's 'Duet'?",
-        choices: ["Record music", "Live chat", "Reply with a side-by-side video", "Group call"],
-        correct: 2
+        question: "Where did TikTok originate?",
+        answers: ["China", "USA", "Japan", "South Korea"],
+        correct: "China"
       },
       {
-        question: "What is the name of TikTok's algorithm-driven main feed?",
-        choices: ["Trending", "My Page", "Explore", "For You Page"],
-        correct: 3
+        question: "Who was the first TikTok star?",
+        answers: ["Charli D'Amelio", "Zach King", "Addison Rae", "Bella Poarch"],
+        correct: "Charli D'Amelio"
       },
       {
-        question: "Which TikTok star became famous for lip-syncing 'Lottery (Renegade)'?",
-        choices: ["Charli D'Amelio", "Addison Rae", "Bella Poarch", "Dixie D'Amelio"],
-        correct: 0
+        question: "What is TikTok's maximum video length?",
+        answers: ["1 minute", "3 minutes", "5 minutes", "10 minutes"],
+        correct: "10 minutes"
       },
       {
-        question: "Which type of content is TikTok mainly known for?",
-        choices: ["Podcasts", "Short videos", "Articles", "Photo posts"],
-        correct: 1
-      },
-      {
-        question: "What does the 'Stitch' feature allow you to do?",
-        choices: ["Edit captions", "Merge your video with another", "Change music", "Tag friends"],
-        correct: 1
+        question: "Which feature is TikTok known for?",
+        answers: ["Lip-syncing", "Augmented reality", "Voiceovers", "All of the above"],
+        correct: "All of the above"
       }
     ];
 
-    let current = 0;
+    let currentQuestion = 0;
     let score = 0;
+    let tilesRevealed = 0;
 
-    const questionEl = document.getElementById("question");
-    const choicesEl = document.getElementById("choices");
-    const scoreEl = document.getElementById("score");
-    const playAgainButton = document.querySelector(".play-again");
+    const puzzleContainer = document.getElementById('puzzle');
+    const questionContainer = document.getElementById('question');
+    const answersContainer = document.getElementById('answers');
+    const scoreContainer = document.getElementById('score');
+    const playAgainButton = document.getElementById('play-again');
 
-    function loadQuestion() {
-      if (current >= questions.length) {
-        questionEl.textContent = "Game Over! Final score: " + score + " / " + questions.length;
-        choicesEl.innerHTML = "";
-        playAgainButton.style.display = "block"; // Show Play Again button
-        return;
+    function createTiles() {
+      for (let i = 0; i < 9; i++) {
+        const tile = document.createElement('div');
+        tile.classList.add('tile');
+        tile.dataset.tileIndex = i;
+        puzzleContainer.appendChild(tile);
       }
+    }
 
-      const q = questions[current];
-      questionEl.textContent = q.question;
-      choicesEl.innerHTML = "";
-
-      q.choices.forEach((choice, index) => {
-        const btn = document.createElement("button");
-        btn.textContent = choice;
-        btn.className = "choice";
-        btn.onclick = () => checkAnswer(index);
-        choicesEl.appendChild(btn);
+    function displayQuestion() {
+      const question = questions[currentQuestion];
+      questionContainer.textContent = question.question;
+      answersContainer.innerHTML = '';
+      question.answers.forEach(answer => {
+        const button = document.createElement('button');
+        button.classList.add('btn');
+        button.textContent = answer;
+        button.onclick = () => checkAnswer(answer, button);
+        answersContainer.appendChild(button);
       });
     }
 
-    function checkAnswer(selected) {
-      if (selected === questions[current].correct) {
-        score++;
-        scoreEl.textContent = "Score: " + score;
+    function checkAnswer(answer, selectedButton) {
+      const correctAnswer = questions[currentQuestion].correct;
+
+      // Highlight selected answer
+      if (answer === correctAnswer) {
+        score++; // Increment score on correct answer
+        scoreContainer.textContent = `Score: ${score} / 9`; // Update score display
+        selectedButton.classList.add('correct-answer');
+        revealTile(); // Reveal a tile with the image
+      } else {
+        selectedButton.classList.add('wrong-answer');
+        // Highlight the correct answer
+        highlightCorrectAnswer(correctAnswer);
       }
-      current++;
-      loadQuestion();
+
+      // Delay to show correct answer before moving to next question
+      setTimeout(() => {
+        currentQuestion++;
+        if (currentQuestion < questions.length) {
+          displayQuestion();
+        } else {
+          endGame();
+        }
+      }, 1000); // Wait 1 second before moving to the next question
+    }
+
+    function highlightCorrectAnswer(correctAnswer) {
+      const answerButtons = document.querySelectorAll('.btn');
+      answerButtons.forEach(button => {
+        if (button.textContent === correctAnswer) {
+          button.classList.add('correct-answer');
+        }
+      });
+    }
+
+    function revealTile() {
+      if (tilesRevealed < 9) {
+        const tile = document.querySelectorAll('.tile')[tilesRevealed];
+        const row = Math.floor(tilesRevealed / 3);
+        const col = tilesRevealed % 3;
+
+        tile.style.backgroundImage = "url('https://images.macrumors.com/t/HBigcx8ZDm2EGrjV1Sd2D-8p5qg=/1600x0/article-new/2020/08/tiktok-logo.jpg')";
+        tile.style.backgroundPosition = `-${col * 100}px -${row * 100}px`; // Position each tile to show part of the image
+        tile.style.backgroundSize = "300px 300px"; // Scale the image to fit the whole puzzle
+
+        tilesRevealed++;
+      }
+    }
+
+    function endGame() {
+      questionContainer.textContent = `Game Over! Your score is ${score} / 9.`;
+      playAgainButton.style.display = 'inline-block';
     }
 
     function restartGame() {
-      current = 0;
+      currentQuestion = 0;
       score = 0;
-      scoreEl.textContent = "Score: 0";
-      playAgainButton.style.display = "none";
-      loadQuestion();
+      tilesRevealed = 0;
+      puzzleContainer.innerHTML = '';
+      answersContainer.innerHTML = '';
+      scoreContainer.textContent = `Score: 0 / 9`;
+      playAgainButton.style.display = 'none';
+      createTiles();
+      displayQuestion();
     }
 
-    loadQuestion();
+    createTiles();
+    displayQuestion();
   </script>
+
 </body>
 </html>
