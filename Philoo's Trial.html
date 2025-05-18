@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>TikTok Trivia Puzzle</title>
+  <title>Essay Puzzle Game</title>
   <style>
     body {
-      background-color: #111;
+      background: linear-gradient(to right, #3a0ca3, #7209b7);
       color: #fff;
       font-family: Arial, sans-serif;
       text-align: center;
@@ -14,7 +14,7 @@
     }
 
     h1 {
-      font-size: 28px;
+      font-size: 32px;
       margin-bottom: 20px;
     }
 
@@ -26,36 +26,45 @@
       justify-content: center;
       margin: 0 auto 20px auto;
       position: relative;
-      width: 300px;  /* Set a fixed width for the puzzle */
-      height: 300px; /* Set a fixed height for the puzzle */
+      width: 300px;
+      height: 300px;
     }
 
     .tile {
       width: 100px;
       height: 100px;
-      background-color: #333;
+      background-color: #222;
       background-repeat: no-repeat;
-      background-size: 0%; /* Start with no background */
-      transition: background-size 0.4s ease;
+      background-size: 300px 300px;
+      opacity: 0;
+      transition: opacity 0.5s ease;
     }
 
     #question-container {
       margin-top: 20px;
     }
 
+    textarea {
+      width: 80%;
+      height: 60px;
+      margin-top: 10px;
+      padding: 10px;
+      font-size: 16px;
+    }
+
     .btn {
-      margin: 10px;
+      margin-top: 10px;
       padding: 10px 20px;
-      background-color: #25f4ee;
+      background-color: #f72585;
       border: none;
-      color: #000;
+      color: #fff;
       cursor: pointer;
       font-weight: bold;
       border-radius: 5px;
     }
 
     .btn:hover {
-      background-color: #1ab9c6;
+      background-color: #b5179e;
     }
 
     #score {
@@ -67,161 +76,104 @@
       margin-top: 20px;
       display: none;
     }
-
-    .correct-answer {
-      background-color: #4caf50; /* Green for correct answer */
-    }
-
-    .wrong-answer {
-      background-color: #f44336; /* Red for wrong answer */
-    }
   </style>
 </head>
 <body>
 
-  <h1>TikTok Trivia Puzzle</h1>
+  <h1>Essay Puzzle Challenge</h1>
   <div id="puzzle"></div>
 
   <div id="question-container">
     <p id="question">Loading question...</p>
-    <div id="answers"></div>
-    <div id="score">Score: 0 / 9</div>
+    <textarea id="answer-input" placeholder="Type your answer here..."></textarea><br>
+    <button class="btn" onclick="submitAnswer()">Submit Answer</button>
+    <div id="score">Score: 0 / 3</div>
     <button id="play-again" class="btn" onclick="restartGame()">Play Again</button>
   </div>
 
   <script>
     const questions = [
       {
-        question: "What year was TikTok launched globally?",
-        answers: ["2015", "2016", "2017", "2018"],
-        correct: "2018"
+        question: "1- HA of Vaxxitek rHVT-IBD-H5 COBRA contains:",
+        acceptableAnswers: [
+          "antigenic and genetic updated h5 strain"
+        ]
       },
       {
-        question: "Which company owns TikTok?",
-        answers: ["Tencent", "ByteDance", "Alibaba", "Microsoft"],
-        correct: "ByteDance"
+        question: "2- Vaxxitek rHVT-IBD-H5 COBRA Can stimulate:",
+        acceptableAnswers: [
+          "all of them", 
+          "all", 
+          "humoral and cellular and innate",
+          "humoral immunity cellular immunity mucosal immunity",
+          "innate mucosal cellular humoral"
+        ]
       },
       {
-        question: "What app was merged into TikTok?",
-        answers: ["Dubsmash", "Vine", "Musical.ly", "Clash"],
-        correct: "Musical.ly"
-      },
-      {
-        question: "What is the TikTok logo shaped like?",
-        answers: ["A star", "A heart", "A music note", "A video camera"],
-        correct: "A music note"
-      },
-      {
-        question: "TikTok videos were initially limited to how many seconds?",
-        answers: ["15", "30", "60", "90"],
-        correct: "15"
-      },
-      {
-        question: "Where did TikTok originate?",
-        answers: ["China", "USA", "Japan", "South Korea"],
-        correct: "China"
-      },
-      {
-        question: "Who was the first TikTok star?",
-        answers: ["Charli D'Amelio", "Zach King", "Addison Rae", "Bella Poarch"],
-        correct: "Charli D'Amelio"
-      },
-      {
-        question: "What is TikTok's maximum video length?",
-        answers: ["1 minute", "3 minutes", "5 minutes", "10 minutes"],
-        correct: "10 minutes"
-      },
-      {
-        question: "Which feature is TikTok known for?",
-        answers: ["Lip-syncing", "Augmented reality", "Voiceovers", "All of the above"],
-        correct: "All of the above"
+        question: "3- Vaxxitek rHVT-IBD-H5 COBRA can be used alone in:",
+        acceptableAnswers: [
+          "broiler chickens",
+          "in broiler chickens"
+        ]
       }
     ];
+
+    const puzzleContainer = document.getElementById('puzzle');
+    const questionContainer = document.getElementById('question');
+    const answerInput = document.getElementById('answer-input');
+    const scoreContainer = document.getElementById('score');
+    const playAgainButton = document.getElementById('play-again');
 
     let currentQuestion = 0;
     let score = 0;
     let tilesRevealed = 0;
 
-    const puzzleContainer = document.getElementById('puzzle');
-    const questionContainer = document.getElementById('question');
-    const answersContainer = document.getElementById('answers');
-    const scoreContainer = document.getElementById('score');
-    const playAgainButton = document.getElementById('play-again');
+    const eagleImageURL = "https://i.imgur.com/yOUR_IMAGE_ID.jpg"; // Replace this with your hosted eagle image
 
     function createTiles() {
       for (let i = 0; i < 9; i++) {
         const tile = document.createElement('div');
         tile.classList.add('tile');
-        tile.dataset.tileIndex = i;
+        tile.dataset.index = i;
+        const row = Math.floor(i / 3);
+        const col = i % 3;
+        tile.style.backgroundImage = `url('${eagleImageURL}')`;
+        tile.style.backgroundPosition = `-${col * 100}px -${row * 100}px`;
         puzzleContainer.appendChild(tile);
       }
     }
 
     function displayQuestion() {
-      const question = questions[currentQuestion];
-      questionContainer.textContent = question.question;
-      answersContainer.innerHTML = '';
-      question.answers.forEach(answer => {
-        const button = document.createElement('button');
-        button.classList.add('btn');
-        button.textContent = answer;
-        button.onclick = () => checkAnswer(answer, button);
-        answersContainer.appendChild(button);
-      });
+      if (currentQuestion < questions.length) {
+        questionContainer.textContent = questions[currentQuestion].question;
+        answerInput.value = '';
+      }
     }
 
-    function checkAnswer(answer, selectedButton) {
-      const correctAnswer = questions[currentQuestion].correct;
-
-      // Highlight selected answer
-      if (answer === correctAnswer) {
-        score++; // Increment score on correct answer
-        scoreContainer.textContent = `Score: ${score} / 9`; // Update score display
-        selectedButton.classList.add('correct-answer');
-        revealTile(); // Reveal a tile with the image
-      } else {
-        selectedButton.classList.add('wrong-answer');
-        // Highlight the correct answer
-        highlightCorrectAnswer(correctAnswer);
+    function submitAnswer() {
+      const userAnswer = answerInput.value.trim().toLowerCase();
+      const accepted = questions[currentQuestion].acceptableAnswers;
+      if (accepted.includes(userAnswer)) {
+        score++;
+        revealTile();
+        scoreContainer.textContent = `Score: ${score} / ${questions.length}`;
       }
 
-      // Delay to show correct answer before moving to next question
-      setTimeout(() => {
-        currentQuestion++;
-        if (currentQuestion < questions.length) {
-          displayQuestion();
-        } else {
-          endGame();
-        }
-      }, 1000); // Wait 1 second before moving to the next question
-    }
-
-    function highlightCorrectAnswer(correctAnswer) {
-      const answerButtons = document.querySelectorAll('.btn');
-      answerButtons.forEach(button => {
-        if (button.textContent === correctAnswer) {
-          button.classList.add('correct-answer');
-        }
-      });
+      currentQuestion++;
+      if (currentQuestion < questions.length) {
+        displayQuestion();
+      } else {
+        questionContainer.textContent = `Game Over! Final score: ${score} / ${questions.length}`;
+        playAgainButton.style.display = 'inline-block';
+      }
     }
 
     function revealTile() {
       if (tilesRevealed < 9) {
         const tile = document.querySelectorAll('.tile')[tilesRevealed];
-        const row = Math.floor(tilesRevealed / 3);
-        const col = tilesRevealed % 3;
-
-        tile.style.backgroundImage = "url('https://images.macrumors.com/t/HBigcx8ZDm2EGrjV1Sd2D-8p5qg=/1600x0/article-new/2020/08/tiktok-logo.jpg')";
-        tile.style.backgroundPosition = `-${col * 100}px -${row * 100}px`; // Position each tile to show part of the image
-        tile.style.backgroundSize = "300px 300px"; // Scale the image to fit the whole puzzle
-
+        tile.style.opacity = 1;
         tilesRevealed++;
       }
-    }
-
-    function endGame() {
-      questionContainer.textContent = `Game Over! Your score is ${score} / 9.`;
-      playAgainButton.style.display = 'inline-block';
     }
 
     function restartGame() {
@@ -229,9 +181,8 @@
       score = 0;
       tilesRevealed = 0;
       puzzleContainer.innerHTML = '';
-      answersContainer.innerHTML = '';
-      scoreContainer.textContent = `Score: 0 / 9`;
       playAgainButton.style.display = 'none';
+      scoreContainer.textContent = `Score: 0 / ${questions.length}`;
       createTiles();
       displayQuestion();
     }
